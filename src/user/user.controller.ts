@@ -29,14 +29,14 @@ export class UserController {
 	@HttpCode(200)
 	@Put('profile')
 	async getNewToken(@CurrentUser('id') id: number, @Body() dto: UserDto) {
-		return this.userService.updateProfile(dto)
+		return this.userService.updateProfile(id, dto)
 	}
 
 	@Auth()
 	@HttpCode(200)
 	@Patch('profile/favorites/:productId')
 	async toggleFavorites(
-		@Param('productId') productId: string,
+		@Param('productId') productId: number,
 		@CurrentUser('id') id: number,
 	) {
 		return this.userService.toggleFavorite(id, productId)
