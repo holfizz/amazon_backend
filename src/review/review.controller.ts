@@ -15,16 +15,17 @@ import { ReviewDto } from './review.dto'
 
 @Controller('reviews')
 export class ReviewController {
-	constructor(private readonly reviewService: ReviewService) {}
+	constructor(private reviewService: ReviewService) {}
 
 	@UsePipes(new ValidationPipe())
 	@Get()
+	@Auth('admin')
 	async getALl() {
 		return this.reviewService.getAll()
 	}
 
 	@UsePipes(new ValidationPipe())
-	@Auth()
+	@Auth('admin')
 	@HttpCode(200)
 	@Post('leave/:productId')
 	async create(

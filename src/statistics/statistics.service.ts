@@ -1,48 +1,35 @@
-import {Injectable} from '@nestjs/common';
-import {PrismaService} from "../prisma.service";
-import {UserService} from "../user/user.service";
+import { Injectable } from '@nestjs/common'
+import { PrismaService } from '../prisma.service'
+import { UserService } from '../user/user.service'
 
 @Injectable()
 export class StatisticsService {
+	constructor(
+		private prisma: PrismaService,
+		private userService: UserService,
+	) {}
 
-  constructor(private prisma: PrismaService,
-              private userService: UserService) {
-  }
-
-  async getMain(userId: number) {
-
-
-    const user = await this.userService.byId(userId, {
-      orders: {
-        select: {
-          items: {
-            select: {
-              price: true
-            }
-          }
-        }
-      },
-      reviews: true
-    })
-
-    
-    return [
-      {
-        name: 'Orders',
-        value: user.orders.length
-      },
-      {
-        name: 'Reviews',
-        value: user.orders.length
-      },
-      {
-        name: 'Favorites',
-        value: user.orders.length
-      },
-      {
-        name: 'Total amount',
-        value: 1000
-      },
-    ]
-  }
+	async getMain() {
+		const ordersCount = await this.prisma.order.count()
+		const reviewsCount = await this.prisma.review.count()
+		const usersCount = await this.prisma.user.count()
+		return [
+			{
+				name: 'Orders',
+				value: ordersCount,
+			},
+			{
+				name: 'Reviews',
+				value: reviewsCount,
+			},
+			{
+				name: 'Users',
+				value: usersCount,
+			},
+			{
+				name: 'Total amount',
+				value: 1000,
+			},
+		]
+	}
 }

@@ -19,20 +19,20 @@ export class UserController {
 	constructor(private readonly userService: UserService) {}
 
 	@Get('profile')
-	@Auth()
+	@Auth('user')
 	async getProfile(@CurrentUser('id') id: number) {
 		return this.userService.byId(id)
 	}
 
 	@UsePipes(new ValidationPipe())
-	@Auth()
+	@Auth('user')
 	@HttpCode(200)
 	@Put('profile')
 	async getNewToken(@CurrentUser('id') id: number, @Body() dto: UserDto) {
 		return this.userService.updateProfile(id, dto)
 	}
 
-	@Auth()
+	@Auth('user')
 	@HttpCode(200)
 	@Patch('profile/favorites/:productId')
 	async toggleFavorites(

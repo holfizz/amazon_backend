@@ -9,12 +9,14 @@ import { faker } from '@faker-js/faker'
 import * as bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt'
 import { User } from '@prisma/client'
+import { UserService } from '../user/user.service'
 
 @Injectable()
 export class AuthService {
 	constructor(
 		private prisma: PrismaService,
 		private jwt: JwtService,
+		private userService: UserService,
 	) {}
 
 	async register(dto: AuthDto) {
@@ -28,7 +30,7 @@ export class AuthService {
 		const user = await this.prisma.user.create({
 			data: {
 				email: dto.email,
-				name: faker.name.firstName(),
+				name: faker.person.firstName(),
 				avatarPath: faker.image.avatar(),
 				phone: faker.phone.number('+7 (###) ###-##-##'),
 				password: await bcrypt.hash(dto.password, 5),
@@ -54,10 +56,11 @@ export class AuthService {
 		return { accessToken, refreshToken }
 	}
 
-	private returnUserFields(user: User) {
+	private returnUserFields(user: Partial<User>) {
 		return {
 			id: user.id,
 			email: user.email,
+			isAdmin: user.isAdmin,
 		}
 	}
 
@@ -77,7 +80,9 @@ export class AuthService {
 		const user = await this.prisma.user.findUnique({
 			where: { id: result.id },
 		})
-		const tokens = await this.issueTokens(user.id)
+		const tokens = await this.userService.byId(result.id, {
+			isAdmin: true,
+		})
 		return {
 			user: this.returnUserFields(user),
 			...tokens,
