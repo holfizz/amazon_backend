@@ -30,7 +30,7 @@ export class ProductService {
 			orderBy: this.getSortOption(dto.sort),
 			skip,
 			take: perPage,
-			select: productReturnObjectFullest,
+			select: returnProductObject,
 		})
 
 		return {
@@ -52,7 +52,7 @@ export class ProductService {
 
 		if (dto.ratings)
 			filters.push(
-				this.getRatingFilters(dto.ratings.split('|').map(rating => +rating)),
+				this.getRatingFilter(dto.ratings.split('|').map(rating => +rating)),
 			)
 		if (dto.minPrice || dto.maxPrice)
 			filters.push(
@@ -105,7 +105,7 @@ export class ProductService {
 			]
 		}
 	}
-	private getRatingFilters(ratings: number[]): Prisma.ProductWhereInput {
+	private getRatingFilter(ratings: number[]): Prisma.ProductWhereInput {
 		return {
 			reviews: {
 				some: {
