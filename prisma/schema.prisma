@@ -33,8 +33,8 @@ model Product {
   createdAt DateTime @default(now()) @map("created_ap")
   updateAt  DateTime @updatedAt @map("updated_up")
 
-  name        String
-  slug        String
+  name        String @unique
+  slug        String @unique
   description String
   price       Int
   images      String[]
