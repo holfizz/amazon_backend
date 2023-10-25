@@ -1,9 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
-import {
-	productReturnObjectFullest,
-	returnProductObject,
-} from '../product/return-product.object'
 import { EnumProductsSort, GetAllProductDto } from './dto/get-all.product.dto'
 import { PaginationService } from '../pagination/pagination.service'
 import { Prisma } from '@prisma/client'
@@ -11,6 +7,10 @@ import { ProductDto } from './dto/product.dto'
 import { generateSlug } from '../../utils/generate-utils'
 import { CategoryService } from '../category/category.service'
 import { ConvertToNumber } from '../../utils/convert-to-number'
+import {
+	productReturnObjectFullest,
+	returnProductObject,
+} from './return-product.object'
 
 @Injectable()
 export class ProductService {
@@ -19,7 +19,6 @@ export class ProductService {
 		private paginationService: PaginationService,
 		private categoryService: CategoryService,
 	) {}
-
 	async getAll(dto: GetAllProductDto = {}) {
 		const { perPage, skip } = this.paginationService.getPagination(dto)
 
@@ -48,12 +47,14 @@ export class ProductService {
 	}
 	private createFilter(dto: GetAllProductDto): Prisma.ProductWhereInput {
 		const filters: Prisma.ProductWhereInput[] = []
+
 		if (dto.searchTerm) filters.push(this.getSearchTermFilter(dto.searchTerm))
 
 		if (dto.ratings)
 			filters.push(
 				this.getRatingFilter(dto.ratings.split('|').map(rating => +rating)),
 			)
+
 		if (dto.minPrice || dto.maxPrice)
 			filters.push(
 				this.getPriceFilter(
@@ -61,7 +62,9 @@ export class ProductService {
 					ConvertToNumber(dto.maxPrice),
 				),
 			)
+
 		if (dto.categoryId) filters.push(this.getCategoryFilter(+dto.categoryId))
+
 		return filters.length ? { AND: filters } : {}
 	}
 	private getSortOption(
@@ -79,8 +82,7 @@ export class ProductService {
 		}
 	}
 	private getSearchTermFilter(searchTerm: string): Prisma.ProductWhereInput {
-		return
-		{
+		return {
 			OR: [
 				{
 					category: {
@@ -102,9 +104,10 @@ export class ProductService {
 						mode: 'insensitive',
 					},
 				},
-			]
+			],
 		}
 	}
+
 	private getRatingFilter(ratings: number[]): Prisma.ProductWhereInput {
 		return {
 			reviews: {
