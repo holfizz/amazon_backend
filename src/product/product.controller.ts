@@ -37,7 +37,7 @@ export class ProductController {
 		return this.productService.byId(+id)
 	}
 
-	@Get('/by-slug/:id')
+	@Get('/by-slug/:slug')
 	async getProductBySlug(@Param('slug') slug: string) {
 		return this.productService.bySlug(slug)
 	}
