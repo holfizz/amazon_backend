@@ -2,13 +2,6 @@ import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
 import { OrderDto } from './order.dto'
 import { returnProductObject } from '../product/return-product.object'
-import * as YooKassa from 'yookassa'
-import * as process from 'process'
-
-const yooKassa = new YooKassa({
-	shopId: process.env['SHOP_ID'],
-	secretKey: process.env['PAYMENT_TOKEN'],
-})
 
 @Injectable()
 export class OrderService {
